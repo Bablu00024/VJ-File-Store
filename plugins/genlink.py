@@ -153,7 +153,7 @@ async def gen_link_batch(bot, message):
         user = await get_user(user_id)
 
         if WEBSITE_URL_MODE == True:
-            share_link = f"{WEBSITE_URL}?Tech_VJ=BATCH-{file_id}"
+            share_link = f"{WEBSITE_URL}?POCKETAUDIO-{file_id}"
         else:
             share_link = f"https://t.me/{username}?start=BATCH-{file_id}"
 
