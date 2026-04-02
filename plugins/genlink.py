@@ -181,9 +181,7 @@ async def gen_link_batch(bot, message):
 # -------------------------
 # NEW /start HANDLER FOR BATCH LINKS
 # -------------------------
-Here’s the **fully integrated `genlink.py` file** with everything wired together — your `/link`, updated `/batch`, and the new `/start` handler that makes the `=BATCH` links actually deliver files:
 
-```python
 # Don't Remove Credit @VJ_Bots
 # Subscribe YouTube Channel For Amazing Bot @Tech_VJ
 # Ask Doubt on telegram @KingVJ01
