@@ -149,8 +149,6 @@ async def gen_link_batch(bot, message):
     if WEBSITE_URL_MODE == True:
         share_link = f"{WEBSITE_URL}?POCKETAUDIO=BATCH-{file_id}"
  
-
-```python
 # Don't Remove Credit @VJ_Bots
 # Subscribe YouTube Channel For Amazing Bot @Tech_VJ
 # Ask Doubt on telegram @KingVJ01
