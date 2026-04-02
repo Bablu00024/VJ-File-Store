@@ -140,10 +140,11 @@ async def gen_link_batch(bot, message):
         with open(f"batchmode_{message.from_user.id}.json", "w+") as out:
             json.dump(outlist, out)
         post = await bot.send_document(
-            LOG_CHANNEL,
-            f"batchmode_{message.from_user.id}.json",
-            file_name=f"Batch{batch_number}.json",
-            caption=f"⚠️ Batch {batch_number} Generated For Filestore."
+    LOG_CHANNEL,
+    f"batchmode_{message.from_user.id}.json",
+    file_name="Batch.json",
+    caption=f"⚠️ Batch {batch_number} Generated For Filestore."
+)
         )
         os.remove(f"batchmode_{message.from_user.id}.json")
 
