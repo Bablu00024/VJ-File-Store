@@ -148,7 +148,7 @@ async def gen_link_batch(bot, message):
     user = await get_user(user_id)
     if WEBSITE_URL_MODE == True:
         share_link = f"{WEBSITE_URL}?POCKETAUDIO=BATCH-{file_id}"
-    elseHere’s your **original code** exactly as you shared it before, without any of my modifications. This is the baseline version you pasted earlier:
+ 
 
 ```python
 # Don't Remove Credit @VJ_Bots
