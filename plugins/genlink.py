@@ -144,7 +144,7 @@ async def gen_link_batch(bot, message):
     f"batchmode_{message.from_user.id}.json",
     file_name="Batch.json",
     caption="⚠️ Batch Generated For Filestore."
-)
+
 
         )
         os.remove(f"batchmode_{message.from_user.id}.json")
