@@ -198,9 +198,7 @@ async def handle_batch(bot, message, alternate=False):
                 )
                 summary_rows.append(short_link)
         else:
-Here’s a **complete `genlink.py` file** you can paste directly into your bot project. It integrates with your `users_api.py` (where you store shortener details) and supports both normal and alternating batch modes:
 
-```python
 # © Telegram : @KingVJ01 , GitHub : @VJBots
 # Don't Remove Credit Tg - @VJ_Bots
 # Subscribe YouTube Channel For Amazing Bot https://youtube.com/@Tech_VJ
