@@ -198,7 +198,14 @@ async def handle_batch(bot, message, alternate=False):
                 )
                 summary_rows.append(short_link)
         else:
+            # normal mode always uses shortener 1
+            short_link = await get_short_link(user, share_link)
+            reply_texts.append(
+                f"<b>⭕ Batch {batch_number} created!\nContains `{og_msg}` files.\n🖇️ Short link: {short_link}</b>"
+            )
+           Here’s the **full corrected `genlink.py` file** with the missing `else` block fixed. You can paste this directly into your project — it will run without indentation errors and supports both `/batch` and `/batchalt`:
 
+```python
 # © Telegram : @KingVJ01 , GitHub : @VJBots
 # Don't Remove Credit Tg - @VJ_Bots
 # Subscribe YouTube Channel For Amazing Bot https://youtube.com/@Tech_VJ
@@ -399,10 +406,9 @@ async def handle_batch(bot, message, alternate=False):
                 )
                 summary_rows.append(short_link)
         else:
+            # normal mode always uses shortener 1
             short_link = await get_short_link(user, share_link)
             reply_texts.append(
                 f"<b>⭕ Batch {batch_number} created!\nContains `{og_msg}` files.\n🖇️ Short link: {short_link}</b>"
             )
-            summary_rows.append(short_link)
-
-        batch_number += 1
+           
