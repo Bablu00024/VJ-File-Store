@@ -184,8 +184,5 @@ async def gen_link_batch(bot, message):
 # -------------------------
 # NEW /start HANDLER FOR BATCH LINKS
 # -------------------------
-@Client.on_message(filters.command("start"))
-async def start_handler(bot, message):
-    args = message.text.split()
-    if len(args) > 1 and "BATCH" in args[1]:
-        batch_id
+@Client.on_message(filters.private & filters.command("start"))
+async def start(client, message):
