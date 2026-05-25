@@ -184,5 +184,3 @@ async def gen_link_batch(bot, message):
 # -------------------------
 # NEW /start HANDLER FOR BATCH LINKS
 # -------------------------
-@Client.on_message(filters.private & filters.command("start"))
-async def start(client, message):
