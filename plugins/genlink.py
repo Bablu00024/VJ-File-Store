@@ -3,13 +3,20 @@
 # Ask Doubt on telegram @KingVJ01
 
 import re
-from pyrogram import filters, Client, enums
-from pyrogram.errors.exceptions.bad_request_400 import ChannelInvalid, UsernameInvalid, UsernameNotModified
-from config import ADMINS, LOG_CHANNEL, PUBLIC_FILE_STORE, WEBSITE_URL, WEBSITE_URL_MODE
-from plugins.users_api import get_user, get_short_link
 import os
 import json
 import base64
+
+from pyrogram import filters, Client
+from pyrogram.errors.exceptions.bad_request_400 import (
+    ChannelInvalid,
+    UsernameInvalid,
+    UsernameNotModified
+)
+
+from config import ADMINS, LOG_CHANNEL, PUBLIC_FILE_STORE, WEBSITE_URL, WEBSITE_URL_MODE
+from plugins.users_api import get_user, get_short_link
+
 
 async def allowed(_, __, message):
     if PUBLIC_FILE_STORE:
@@ -18,54 +25,76 @@ async def allowed(_, __, message):
         return True
     return False
 
+
 # -------------------------
 # SINGLE FILE LINK HANDLER
 # -------------------------
 @Client.on_message((filters.document | filters.video | filters.audio) & filters.private & filters.create(allowed))
 async def incoming_gen_link(bot, message):
     username = (await bot.get_me()).username
+
     post = await message.copy(LOG_CHANNEL)
     file_id = str(post.id)
-    string = 'file_' + file_id
+
+    string = "file_" + file_id
     outstr = base64.urlsafe_b64encode(string.encode("ascii")).decode().strip("=")
+
     user_id = message.from_user.id
     user = await get_user(user_id)
+
     if WEBSITE_URL_MODE:
         share_link = f"{WEBSITE_URL}?POCKETAUDIO={outstr}"
     else:
         share_link = f"https://t.me/{username}?start={outstr}"
-    if user["base_site"] and user["shortener_api"] != None:
-        short_link = await get_short_link(user, share_link)
-        await message.reply(f"<b>⭕ ʜᴇʀᴇ ɪs ʏᴏᴜʀ ʟɪɴᴋ:\n\n🖇️ sʜᴏʀᴛ ʟɪɴᴋ :- {short_link}</b>")
-    else:
-        await message.reply(f"<b>⭕ ʜᴇʀᴇ ɪs ʏᴏᴜʀ ʟɪɴᴋ:\n\n🔗 ᴏʀɪɢɪɴᴀʟ ʟɪɴᴋ :- {share_link}</b>")
 
-@Client.on_message(filters.command(['link']) & filters.create(allowed))
+    if user["base_site"] and user["shortener_api"] is not None:
+        short_link = await get_short_link(user, share_link)
+        await message.reply(
+            f"<b>⭕ ʜᴇʀᴇ ɪs ʏᴏᴜʀ ʟɪɴᴋ:\n\n🖇️ sʜᴏʀᴛ ʟɪɴᴋ :- {short_link}</b>"
+        )
+    else:
+        await message.reply(
+            f"<b>⭕ ʜᴇʀᴇ ɪs ʏᴏᴜʀ ʟɪɴᴋ:\n\n🔗 ᴏʀɪɢɪɴᴀʟ ʟɪɴᴋ :- {share_link}</b>"
+        )
+
+
+@Client.on_message(filters.command(["link"]) & filters.create(allowed))
 async def gen_link_s(bot, message):
     username = (await bot.get_me()).username
+
     replied = message.reply_to_message
     if not replied:
-        return await message.reply('Reply to a message to get a shareable link.')
+        return await message.reply("Reply to a message to get a shareable link.")
+
     post = await replied.copy(LOG_CHANNEL)
     file_id = str(post.id)
+
     string = f"file_{file_id}"
     outstr = base64.urlsafe_b64encode(string.encode("ascii")).decode().strip("=")
+
     user_id = message.from_user.id
     user = await get_user(user_id)
+
     if WEBSITE_URL_MODE:
         share_link = f"{WEBSITE_URL}?POCKETAUDIO={outstr}"
     else:
         share_link = f"https://t.me/{username}?start={outstr}"
-    if user["base_site"] and user["shortener_api"] != None:
+
+    if user["base_site"] and user["shortener_api"] is not None:
         short_link = await get_short_link(user, share_link)
-        await message.reply(f"<b>⭕ ʜᴇʀᴇ ɪs ʏᴏᴜʀ ʟɪɴᴋ:\n\n🖇️ sʜᴏʀᴛ ʟɪɴᴋ :- {short_link}</b>")
+        await message.reply(
+            f"<b>⭕ ʜᴇʀᴇ ɪs ʏᴏᴜʀ ʟɪɴᴋ:\n\n🖇️ sʜᴏʀᴛ ʟɪɴᴋ :- {short_link}</b>"
+        )
     else:
-        await message.reply(f"<b>⭕ ʜᴇʀᴇ ɪs ʏᴏᴜʀ ʟɪɴᴋ:\n\n🔗 ᴏʀɪɢɪɴᴀʟ ʟɪɴᴋ :- {share_link}</b>")
+        await message.reply(
+            f"<b>⭕ ʜᴇʀᴇ ɪs ʏᴏᴜʀ ʟɪɴᴋ:\n\n🔗 ᴏʀɪɢɪɴᴀʟ ʟɪɴᴋ :- {share_link}</b>"
+        )
+
 
 # -------------------------
 # MULTI-RANGE /batch HANDLER
 # -------------------------
-@Client.on_message(filters.command(['batch']) & filters.create(allowed))
+@Client.on_message(filters.command(["batch"]) & filters.create(allowed))
 async def gen_link_batch(bot, message):
     username = (await bot.get_me()).username
     links = message.text.strip().split()
@@ -77,21 +106,27 @@ async def gen_link_batch(bot, message):
             "/batch <first_link> <last_link> [<first_link> <last_link> ...]"
         )
 
-    regex = re.compile("(https://)?(t\.me/|telegram\.me/|telegram\.dog/)(c/)?(\d+|[a-zA-Z_0-9]+)/(\d+)$")
+    regex = re.compile(
+        r"(https://)?(t\.me/|telegram\.me/|telegram\.dog/)(c/)?(\d+|[a-zA-Z_0-9]+)/(\d+)$"
+    )
+
     reply_texts = []
     summary_rows = []
     batch_number = 1
 
     for i in range(1, len(links), 2):
-        first, last = links[i], links[i+1]
+        first = links[i]
+        last = links[i + 1]
 
         match = regex.match(first)
         if not match:
             reply_texts.append(f"❌ Batch {batch_number}: Invalid first link")
             batch_number += 1
             continue
+
         f_chat_id = match.group(4)
         f_msg_id = int(match.group(5))
+
         if f_chat_id.isnumeric():
             f_chat_id = int("-100" + f_chat_id)
 
@@ -100,8 +135,10 @@ async def gen_link_batch(bot, message):
             reply_texts.append(f"❌ Batch {batch_number}: Invalid last link")
             batch_number += 1
             continue
+
         l_chat_id = match.group(4)
         l_msg_id = int(match.group(5))
+
         if l_chat_id.isnumeric():
             l_chat_id = int("-100" + l_chat_id)
 
@@ -111,9 +148,11 @@ async def gen_link_batch(bot, message):
             continue
 
         try:
-            chat_id = (await bot.get_chat(f_chat_id)).id
+            await bot.get_chat(f_chat_id)
         except ChannelInvalid:
-            reply_texts.append(f"❌ Batch {batch_number}: Private channel/group. Make me admin.")
+            reply_texts.append(
+                f"❌ Batch {batch_number}: Private channel/group. Make me admin."
+            )
             batch_number += 1
             continue
         except (UsernameInvalid, UsernameNotModified):
@@ -127,10 +166,16 @@ async def gen_link_batch(bot, message):
 
         outlist = []
         og_msg = 0
+
         async for msg in bot.iter_messages(f_chat_id, l_msg_id, f_msg_id):
             if msg.empty or msg.service:
                 continue
-            file = {"channel_id": f_chat_id, "msg_id": msg.id}
+
+            file = {
+                "channel_id": f_chat_id,
+                "msg_id": msg.id
+            }
+
             og_msg += 1
             outlist.append(file)
 
@@ -139,18 +184,23 @@ async def gen_link_batch(bot, message):
             batch_number += 1
             continue
 
-        with open(f"batchmode_{message.from_user.id}.json", "w+") as out:
+        batch_file = f"batchmode_{message.from_user.id}.json"
+
+        with open(batch_file, "w+") as out:
             json.dump(outlist, out)
+
         post = await bot.send_document(
             LOG_CHANNEL,
-            f"batchmode_{message.from_user.id}.json",
+            batch_file,
             file_name="Batch.json",
             caption="⚠️ Batch Generated For Filestore."
         )
-        os.remove(f"batchmode_{message.from_user.id}.json")
+
+        os.remove(batch_file)
 
         string = str(post.id)
         file_id = base64.urlsafe_b64encode(string.encode("ascii")).decode().strip("=")
+
         user_id = message.from_user.id
         user = await get_user(user_id)
 
@@ -159,28 +209,28 @@ async def gen_link_batch(bot, message):
         else:
             share_link = f"https://t.me/{username}?start=BATCH-{file_id}"
 
-        if user["base_site"] and user["shortener_api"] != None:
+        if user["base_site"] and user["shortener_api"] is not None:
             short_link = await get_short_link(user, share_link)
             reply_texts.append(
-                f"<b>⭕ Batch {batch_number} created!\nContains `{og_msg}` files.\n🖇️ Short link: {short_link}</b>"
+                f"<b>⭕ Batch {batch_number} created!\n"
+                f"Contains `{og_msg}` files.\n"
+                f"🖇️ Short link: {short_link}</b>"
             )
             summary_rows.append(short_link)
         else:
             reply_texts.append(
-                f"<b>⭕ Batch {batch_number} created!\nContains `{og_msg}` files.\n🔗 Original link: {share_link}</b>"
+                f"<b>⭕ Batch {batch_number} created!\n"
+                f"Contains `{og_msg}` files.\n"
+                f"🔗 Original link: {share_link}</b>"
             )
             summary_rows.append(share_link)
 
         batch_number += 1
 
     final_output = "\n\n".join(reply_texts)
+
     if summary_rows:
-        # Only show links in summary
         summary_table = "\n".join(summary_rows)
         final_output += f"\n\n<b>📋 Summary Links</b>\n<pre>{summary_table}</pre>"
 
     await message.reply(final_output)
-
-# -------------------------
-# NEW /start HANDLER FOR BATCH LINKS
-# -------------------------
